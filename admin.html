@@ -265,11 +265,15 @@ function setStatus(ok){
 }
 
 async function loadPhotos(){
-  const url=`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/resources/image?max_results=500&context=true&tags=true&prefix=katiebor/`;
-  const res=await fetch(url,{headers:{'Authorization':`Basic ${btoa(API_KEY+':'+API_SECRET)}`}});
+  const url=`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/resources/search`;
+  const res=await fetch(url,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':`Basic ${btoa(API_KEY+':'+API_SECRET)}`},
+    body:JSON.stringify({expression:'folder=katiebor',max_results:500,with_field:['context','tags']})
+  });
   if(!res.ok) throw new Error('Failed');
   const data=await res.json();
-  allPhotos=data.resources.map(r=>({
+  allPhotos=(data.resources||[]).map(r=>({
     publicId:r.public_id,url:r.secure_url,
     title:r.context?.custom?.title||r.public_id.split('/').pop(),
     loc:r.context?.custom?.loc||'',
