@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -265,11 +266,16 @@ function setStatus(ok){
 }
 
 async function loadPhotos(){
+  // Use Search API — supports CORS from browser unlike Admin API
+  const timestamp=Math.floor(Date.now()/1000);
+  const expression='folder=katiebor';
+  const sigStr=`expression=${expression}&max_results=500&timestamp=${timestamp}&with_field=context&with_field=tags${API_SECRET}`;
+  const sig=await sha1(sigStr);
   const url=`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/resources/search`;
   const res=await fetch(url,{
     method:'POST',
     headers:{'Content-Type':'application/json','Authorization':`Basic ${btoa(API_KEY+':'+API_SECRET)}`},
-    body:JSON.stringify({expression:'folder=katiebor',max_results:500,with_field:['context','tags']})
+    body:JSON.stringify({expression,max_results:500,with_field:['context','tags']})
   });
   if(!res.ok) throw new Error('Failed');
   const data=await res.json();
