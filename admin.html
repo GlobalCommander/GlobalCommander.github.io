@@ -8,7 +8,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@300;400;500&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
-:root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#242424;--border:rgba(255,255,255,.08);--text:#f0ece4;--text-dim:rgba(240,236,228,.45);--accent:#c8a96e;--green:#4caf7d;--red:#e05555;}
+:root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#242424;--border:rgba(255,255,255,.08);--text:#f0ece4;--text-dim:rgba(240,236,228,.45);--accent:#c8a96e;--green:#4caf7d;--red:#e05555;--blue:#5b9cf6;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
 #loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem;}
 .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2.5rem;width:100%;max-width:380px;text-align:center;}
@@ -74,10 +74,10 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 .progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:4px;height:6px;margin-top:.5rem;}
 .progress-bar{height:6px;border-radius:4px;background:var(--accent);width:0%;transition:width .3s;}
 .progress-label{font-size:12px;color:var(--text-dim);}
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
 .photo-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .2s;}
 .photo-card:hover{border-color:rgba(255,255,255,.18);}
-.photo-card.inactive{opacity:.5;}
+.photo-card.inactive{opacity:.6;}
 .photo-img-wrap{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--surface2);}
 .photo-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
 .photo-badge{position:absolute;top:8px;left:8px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:20px;font-weight:500;}
@@ -88,6 +88,8 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 .photo-title{font-size:13px;font-weight:500;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .photo-loc{font-size:11px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .photo-actions{display:flex;gap:6px;padding:.6rem .8rem;border-top:1px solid var(--border);}
+.edit-btn{font-family:'DM Sans',sans-serif;font-size:11px;padding:.4rem .6rem;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text-dim);transition:all .15s;}
+.edit-btn:hover{color:var(--blue);border-color:rgba(91,156,246,.3);background:rgba(91,156,246,.08);}
 .toggle-btn{flex:1;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;padding:.4rem;border-radius:5px;cursor:pointer;transition:all .15s;border:1px solid var(--border);background:none;color:var(--text-dim);}
 .toggle-btn:hover{background:rgba(76,175,125,.1);color:var(--green);border-color:rgba(76,175,125,.3);}
 .toggle-btn.is-active:hover{background:rgba(224,85,85,.1);color:var(--red);border-color:rgba(224,85,85,.3);}
@@ -100,12 +102,12 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 .toast.show{transform:translateY(0);opacity:1;}
 .toast.success{border-color:rgba(76,175,125,.4);color:var(--green);}
 .toast.error{border-color:rgba(224,85,85,.4);color:var(--red);}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:2rem;width:420px;max-width:90vw;}
-.modal h3{font-size:17px;margin-bottom:.5rem;}
-.modal p{font-size:13px;color:var(--text-dim);margin-bottom:1.5rem;line-height:1.6;}
-.modal-actions{display:flex;gap:.75rem;justify-content:flex-end;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:2rem;width:440px;max-width:90vw;}
+.modal h3{font-size:17px;margin-bottom:1.2rem;}
+.modal-form-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem;}
+.modal-actions{display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem;}
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
 @keyframes spin{to{transform:rotate(360deg);}}
 </style>
@@ -134,6 +136,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
       <button class="logout-btn" onclick="logout()">Log out</button>
     </div>
   </header>
+
   <div class="container">
     <aside class="sidebar">
       <div class="sidebar-section">
@@ -162,6 +165,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
         </a>
       </div>
     </aside>
+
     <main class="main">
       <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFiles(event)">
         <input type="file" id="fileInput" multiple accept="image/*" onchange="handleFiles(this.files)">
@@ -169,6 +173,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
         <div class="upload-title">Drop photos here or click to upload</div>
         <div class="upload-sub">JPG, PNG, HEIC supported · High resolution recommended</div>
       </div>
+
       <div class="upload-form" id="uploadForm">
         <div class="sidebar-label" style="margin-bottom:1rem;">New Photos — Add Details</div>
         <div id="previewStrip" class="preview-strip"></div>
@@ -202,12 +207,14 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
           <button class="btn btn-primary" onclick="uploadPhotos()" id="uploadBtn">Upload to Cloudinary</button>
         </div>
       </div>
+
       <div class="toolbar">
         <div>
           <div class="page-title" id="pageTitle">All Photos</div>
           <div class="photo-count-label" id="gridCount"></div>
         </div>
       </div>
+
       <div class="photo-grid" id="photoGrid"></div>
       <div class="empty-state" id="emptyState" style="display:none;">
         <div class="empty-icon">🖼</div>
@@ -218,16 +225,48 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
   </div>
 </div>
 
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3>Edit Photo</h3>
+    <div class="modal-form-group">
+      <label class="form-label">Title</label>
+      <input class="form-input" id="edit-title" placeholder="e.g. Morning Market">
+    </div>
+    <div class="modal-form-group">
+      <label class="form-label">Location</label>
+      <input class="form-input" id="edit-loc" placeholder="e.g. Hanoi, Vietnam">
+    </div>
+    <div class="modal-form-group">
+      <label class="form-label">Category</label>
+      <select class="form-select" id="edit-cat">
+        <option value="travel">Travel</option>
+        <option value="portrait">Portraits</option>
+        <option value="culture">Culture</option>
+        <option value="nature">Nature</option>
+        <option value="nyc">New York</option>
+        <option value="waffle">Waffle 🧇</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEdit()" id="saveEditBtn">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Modal -->
 <div class="modal-overlay" id="deleteModal">
   <div class="modal">
     <h3>Delete this photo?</h3>
-    <p>This will permanently remove the photo from Cloudinary and katiebor.com. This cannot be undone.</p>
+    <p style="font-size:13px;color:var(--text-dim);margin-bottom:1.5rem;line-height:1.6;">This will permanently remove the photo from Cloudinary and katiebor.com. This cannot be undone.</p>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeDeleteModal()">Cancel</button>
       <button class="btn btn-danger" onclick="confirmDelete()" id="confirmDeleteBtn">Delete permanently</button>
     </div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -236,7 +275,7 @@ const API_KEY='173888192549935';
 const API_SECRET='ocY9xfkco9Zz6bQCrffd9fcX7eI';
 const PASSWORD='Umbrella02201994';
 const PRESET='katiebor';
-let allPhotos=[],currentFilter='all',pendingFiles=[],deletePublicId=null;
+let allPhotos=[],currentFilter='all',pendingFiles=[],deletePublicId=null,editPublicId=null;
 
 function checkPassword(){
   if(document.getElementById('passwordInput').value===PASSWORD){
@@ -266,14 +305,14 @@ function setStatus(ok){
   document.getElementById('statusText').textContent=ok?'Connected':'Connection failed';
 }
 
-// ── KEY CHANGE: use Netlify function instead of Cloudinary directly ──
 async function loadPhotos(){
   const res=await fetch('/.netlify/functions/cloudinary');
   if(!res.ok) throw new Error('Failed');
   const data=await res.json();
   allPhotos=(data.resources||[]).map(r=>({
-    publicId:r.public_id,url:r.secure_url,
-    title:r.context?.custom?.title||r.public_id.split('/').pop(),
+    publicId:r.public_id,
+    url:r.secure_url,
+    title:r.context?.custom?.title||'',
     loc:r.context?.custom?.loc||'',
     cat:r.context?.custom?.cat||'travel',
     active:r.context?.custom?.active!=='false',
@@ -296,17 +335,19 @@ function renderGrid(){
         <div class="photo-cat-badge">${catLabel(p.cat)}</div>
       </div>
       <div class="photo-info">
-        <div class="photo-title">${p.title}</div>
-        <div class="photo-loc">${p.loc||'—'}</div>
+        <div class="photo-title">${p.title||'Untitled'}</div>
+        <div class="photo-loc">${p.loc||'No location'}</div>
       </div>
       <div class="photo-actions">
-        <button class="toggle-btn ${p.active?'is-active':''}" onclick="toggleActive('${p.publicId}',${p.active})">${p.active?'Hide from site':'Show on site'}</button>
+        <button class="edit-btn" onclick="openEditModal('${p.publicId}')">✏️ Edit</button>
+        <button class="toggle-btn ${p.active?'is-active':''}" onclick="toggleActive('${p.publicId}',${p.active})">${p.active?'Hide':'Show'}</button>
         <button class="del-btn" onclick="askDelete('${p.publicId}')">🗑</button>
       </div>
     </div>`).join('');
 }
 
 function catLabel(c){return {travel:'Travel',portrait:'Portraits',culture:'Culture',nature:'Nature',nyc:'New York',waffle:'Waffle 🧇'}[c]||c;}
+
 function updateStats(){
   const active=allPhotos.filter(p=>p.active).length;
   document.getElementById('stat-total').textContent=allPhotos.length;
@@ -314,6 +355,7 @@ function updateStats(){
   document.getElementById('stat-hidden').textContent=allPhotos.length-active;
   document.getElementById('stat-cats').textContent=new Set(allPhotos.map(p=>p.cat)).size;
 }
+
 function updateCounts(){
   document.getElementById('count-all').textContent=allPhotos.length;
   ['travel','portrait','culture','nature','nyc','waffle'].forEach(c=>{
@@ -321,6 +363,7 @@ function updateCounts(){
     if(el) el.textContent=allPhotos.filter(p=>p.cat===c).length;
   });
 }
+
 function setFilter(cat,btn){
   currentFilter=cat;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
@@ -328,9 +371,59 @@ function setFilter(cat,btn){
   document.getElementById('pageTitle').textContent={all:'All Photos',travel:'Travel',portrait:'Portraits',culture:'Culture',nature:'Nature',nyc:'New York',waffle:'Waffle 🧇'}[cat]||cat;
   renderGrid();
 }
+
+// ── EDIT ──
+function openEditModal(publicId){
+  const photo=allPhotos.find(p=>p.publicId===publicId);
+  if(!photo) return;
+  editPublicId=publicId;
+  document.getElementById('edit-title').value=photo.title;
+  document.getElementById('edit-loc').value=photo.loc;
+  document.getElementById('edit-cat').value=photo.cat;
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeEditModal(){
+  document.getElementById('editModal').classList.remove('open');
+  editPublicId=null;
+}
+
+async function saveEdit(){
+  if(!editPublicId) return;
+  const photo=allPhotos.find(p=>p.publicId===editPublicId);
+  const title=document.getElementById('edit-title').value.trim();
+  const loc=document.getElementById('edit-loc').value.trim();
+  const cat=document.getElementById('edit-cat').value;
+  const btn=document.getElementById('saveEditBtn');
+  btn.innerHTML='<span class="spinner"></span>';btn.disabled=true;
+
+  try{
+    const res=await fetch('/.netlify/functions/cloudinary-update',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        publicId:editPublicId,
+        title,loc,cat,
+        active:photo.active.toString()
+      })
+    });
+    if(!res.ok) throw new Error('Failed');
+    // Update local state
+    photo.title=title;photo.loc=loc;photo.cat=cat;
+    renderGrid();updateCounts();updateStats();
+    showToast('Photo updated successfully!','success');
+    closeEditModal();
+  } catch(e){
+    showToast('Could not save changes','error');
+  }
+  btn.innerHTML='Save Changes';btn.disabled=false;
+}
+
+// ── UPLOAD ──
 function dragOver(e){e.preventDefault();document.getElementById('uploadZone').classList.add('dragover');}
 function dragLeave(){document.getElementById('uploadZone').classList.remove('dragover');}
 function dropFiles(e){e.preventDefault();dragLeave();handleFiles(e.dataTransfer.files);}
+
 function handleFiles(files){
   if(!files.length) return;
   pendingFiles=Array.from(files);
@@ -340,6 +433,7 @@ function handleFiles(files){
   document.getElementById('uploadForm').classList.add('visible');
   document.getElementById('uploadZone').style.display='none';
 }
+
 function cancelUpload(){
   pendingFiles=[];
   document.getElementById('uploadForm').classList.remove('visible');
@@ -349,6 +443,7 @@ function cancelUpload(){
   document.getElementById('uploadProgress').classList.remove('visible');
   document.getElementById('progressBar').style.width='0%';
 }
+
 async function uploadPhotos(){
   if(!pendingFiles.length) return;
   const title=document.getElementById('f-title').value.trim();
@@ -376,28 +471,33 @@ async function uploadPhotos(){
   cancelUpload();await loadPhotos();
   btn.innerHTML='Upload to Cloudinary';btn.disabled=false;
 }
-async function sha1(str){
-  const buf=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
+
+// ── TOGGLE ──
 async function toggleActive(publicId,currently){
   const photo=allPhotos.find(p=>p.publicId===publicId);
   const newVal=!currently;
-  const timestamp=Math.floor(Date.now()/1000);
-  const context=`title=${photo.title}|loc=${photo.loc}|cat=${photo.cat}|active=${newVal}`;
-  const sig=await sha1(`context=${context}&public_id=${publicId}&timestamp=${timestamp}${API_SECRET}`);
-  const fd=new FormData();
-  fd.append('public_id',publicId);fd.append('context',context);
-  fd.append('api_key',API_KEY);fd.append('timestamp',timestamp);fd.append('signature',sig);
   try{
-    const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/context`,{method:'POST',body:fd});
+    const res=await fetch('/.netlify/functions/cloudinary-update',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        publicId,
+        title:photo.title,
+        loc:photo.loc,
+        cat:photo.cat,
+        active:newVal.toString()
+      })
+    });
     if(!res.ok) throw new Error();
     photo.active=newVal;renderGrid();updateStats();
     showToast(newVal?'Photo is now live on katiebor.com':'Photo hidden from site',newVal?'success':'error');
   } catch{showToast('Could not update photo','error');}
 }
+
+// ── DELETE ──
 function askDelete(id){deletePublicId=id;document.getElementById('deleteModal').classList.add('open');}
-function closeModal(){document.getElementById('deleteModal').classList.remove('open');deletePublicId=null;}
+function closeDeleteModal(){document.getElementById('deleteModal').classList.remove('open');deletePublicId=null;}
+
 async function confirmDelete(){
   if(!deletePublicId) return;
   const btn=document.getElementById('confirmDeleteBtn');
@@ -415,14 +515,21 @@ async function confirmDelete(){
     renderGrid();updateStats();updateCounts();
     showToast('Photo permanently deleted','error');
   } catch{showToast('Could not delete photo','error');}
-  closeModal();btn.innerHTML='Delete permanently';btn.disabled=false;
+  closeDeleteModal();btn.innerHTML='Delete permanently';btn.disabled=false;
 }
+
+async function sha1(str){
+  const buf=await crypto.subtle.digest('SHA-1',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
 function showToast(msg,type='success'){
   const t=document.getElementById('toast');
   t.textContent=(type==='success'?'✓ ':'✕ ')+msg;
   t.className=`toast ${type} show`;
   setTimeout(()=>t.classList.remove('show'),3500);
 }
+
 if(sessionStorage.getItem('kb_auth')==='1') init();
 </script>
 </body>
