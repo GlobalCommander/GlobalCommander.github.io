@@ -312,10 +312,10 @@ async function loadPhotos(){
   allPhotos=(data.resources||[]).map(r=>({
     publicId:r.public_id,
     url:r.secure_url,
-    title:r.context?.custom?.title||'',
-    loc:r.context?.custom?.loc||'',
-    cat:r.context?.custom?.cat||'travel',
-    active:r.context?.custom?.active!=='false',
+    title:r.context?.title||r.context?.custom?.title||'',
+    loc:r.context?.loc||r.context?.custom?.loc||'',
+    cat:r.context?.cat||r.context?.custom?.cat||'travel',
+    active:(r.context?.active||r.context?.custom?.active)!=='false',
     createdAt:r.created_at,
   }));
   renderGrid();updateStats();updateCounts();
