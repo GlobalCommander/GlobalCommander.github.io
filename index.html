@@ -186,10 +186,22 @@ function buildTable(){
     el.style.transform="rotate("+p.rot+"deg)";
     el.style.filter="brightness(.75)";
     el._rot=p.rot;el._idx=i;
+    var sizes=[
+      {w:160,h:120},{w:120,h:160},{w:180,h:135},{w:135,h:180},
+      {w:200,h:150},{w:150,h:200},{w:170,h:170},{w:140,h:105},
+      {w:105,h:140},{w:190,h:140},{w:140,h:190}
+    ];
+    var sz=sizes[Math.floor(Math.random()*sizes.length)];
     var border=document.createElement("div");
     border.className="photo-border";
+    border.style.width=sz.w+"px";
+    border.style.height=sz.h+"px";
     var img=document.createElement("img");
-    img.src=p.url.replace("/upload/","/upload/w_320,q_auto,f_auto/");
+    img.src=p.url.replace("/upload/","/upload/q_100/");
+    img.style.width=sz.w+"px";
+    img.style.height=sz.h+"px";
+    img.style.objectFit="cover";
+    img.style.display="block";
     img.loading="lazy";
     img.alt=p.title;
     var cap=document.createElement("div");
