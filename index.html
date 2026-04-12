@@ -197,10 +197,9 @@ function buildTable(){
     border.style.width=sz.w+"px";
     border.style.height=sz.h+"px";
     var img=document.createElement("img");
-    img.src=p.url.replace("/upload/","/upload/w_"+sz.w*2+",h_"+sz.h*2+",c_fill,q_100/");
+    img.src=p.url.replace("/upload/","/upload/w_400,q_100/");
     img.style.width=sz.w+"px";
-    img.style.height=sz.h+"px";
-    img.style.objectFit="cover";
+    img.style.height="auto";
     img.style.display="block";
     img.loading="lazy";
     img.alt=p.title;
