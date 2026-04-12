@@ -195,7 +195,8 @@ function buildTable(){
     var border=document.createElement("div");
     border.className="photo-border";
     border.style.width=sz.w+"px";
-    border.style.height=sz.h+"px";
+    border.style.maxWidth=sz.w+"px";
+    border.style.overflow="hidden";
     var img=document.createElement("img");
     img.src=p.url.replace("/upload/","/upload/w_400,q_100/");
     img.style.width=sz.w+"px";
