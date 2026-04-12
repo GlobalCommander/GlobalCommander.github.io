@@ -32,6 +32,31 @@ html,body{width:100%;height:100%;overflow:hidden;background:#2a1a0e;}
 .photo-cap{text-align:center;margin-top:4px;font-family:"EB Garamond",serif;font-style:italic;font-size:8.5px;color:rgba(60,38,18,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 #photo-info{position:fixed;right:2rem;top:50%;transform:translateY(-50%);z-index:400;text-align:right;opacity:0;transition:opacity .45s;pointer-events:none;max-width:160px;}
 #photo-info.visible{opacity:1;}
+
+#photo-overlay{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,.88);
+  display:none;align-items:center;justify-content:center;
+  transition:background .4s;
+}
+#photo-overlay.active{display:flex;}
+#photo-overlay-inner{
+  position:relative;
+  max-width:88vw;max-height:88vh;
+  display:flex;flex-direction:column;align-items:center;
+}
+#photo-overlay-img{
+  max-width:100%;max-height:80vh;
+  object-fit:contain;display:block;
+  border:10px solid #ede8df;
+  box-shadow:0 20px 80px rgba(0,0,0,.7);
+}
+#photo-overlay-cap{
+  margin-top:.8rem;text-align:center;
+  font-family:"EB Garamond",serif;font-style:italic;
+  font-size:13px;color:rgba(255,255,255,.5);
+  letter-spacing:.04em;
+}
 #info-title{font-family:"EB Garamond",serif;font-style:italic;font-size:21px;color:var(--text);line-height:1.15;margin-bottom:.35rem;}
 #info-loc{font-family:"DM Sans",sans-serif;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(242,236,224,.42);}
 #info-cat{display:inline-block;margin-top:.6rem;font-family:"DM Sans",sans-serif;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:rgba(200,169,110,.7);border:.5px solid rgba(200,169,110,.3);padding:3px 9px;border-radius:20px;}
@@ -219,32 +244,33 @@ function buildTable(){
 }
 
 function activatePhoto(idx,anim){
-  var SB=window.innerWidth>700?210:0;
-  var vw=window.innerWidth,vh=window.innerHeight;
+  // Highlight active photo on table with subtle lift
   photoEls.forEach(function(el,i){
     var p=allPhotos[i];
     if(i===idx){
-      el.style.transition=anim===false?"none":"transform .55s cubic-bezier(.22,1,.36,1),filter .55s ease,box-shadow .55s ease";
-      var elL=parseFloat(el.style.left),elT=parseFloat(el.style.top);
-      var pw=178,ph=214;
-      var cx=SB+(vw-SB)/2,cy=vh/2;
-      var dx=cx-(elL+pw/2),dy=cy-(elT+ph/2);
-      var usableW=(vw-SB)*0.82,usableH=vh*0.85;
-      var scl=Math.min(usableW/pw,usableH/ph,3.2);
-      el.style.transform="translate("+dx+"px,"+dy+"px) rotate("+(p.rot*0.04)+"deg) scale("+scl+")";
-      el.style.filter="brightness(1) contrast(1.03) saturate(1.05)";
-      el.style.zIndex=120;
+      el.style.transition=anim===false?"none":"transform .4s cubic-bezier(.22,1,.36,1),filter .4s ease";
+      el.style.transform="rotate("+(p.rot*0.3)+"deg) scale(1.1)";
+      el.style.filter="brightness(1)";
+      el.style.zIndex=50;
       el.classList.add("active");
     } else {
-      el.style.transition="transform .45s cubic-bezier(.22,1,.36,1),filter .45s ease";
+      el.style.transition="transform .4s cubic-bezier(.22,1,.36,1),filter .4s ease";
       el.style.transform="rotate("+p.rot+"deg)";
-      el.style.filter=i<idx?"brightness(.42) saturate(.6)":"brightness(.75)";
+      el.style.filter=i<idx?"brightness(.4) saturate(.6)":"brightness(.72)";
       el.style.zIndex=i+1;
       el.classList.remove("active");
     }
   });
+  // Show full quality in overlay
   var p=allPhotos[idx];
   if(p){
+    var overlay=document.getElementById("photo-overlay");
+    var overlayImg=document.getElementById("photo-overlay-img");
+    var overlayCap=document.getElementById("photo-overlay-cap");
+    overlayImg.src=p.url.replace("/upload/","/upload/w_2400,q_95/");
+    overlayImg.alt=p.title;
+    overlayCap.textContent=p.loc?p.title+" — "+p.loc:p.title;
+    overlay.classList.add("active");
     document.getElementById("info-title").textContent=p.title;
     document.getElementById("info-loc").textContent=p.loc;
     document.getElementById("info-cat").textContent=catLabel(p.cat);
@@ -282,6 +308,7 @@ window.addEventListener("keydown",function(e){
 
 function showGrid(cat,btn){
   gridVisible=true;
+  document.getElementById("photo-overlay").classList.remove("active");
   document.querySelectorAll(".sb-nav button").forEach(function(b){b.classList.remove("active");});
   if(btn)btn.classList.add("active");
   var labels={travel:"Travel",portrait:"Portraits",culture:"Culture",nature:"Nature",nyc:"New York",waffle:"Waffle"};
@@ -324,6 +351,10 @@ function showTable(){
   activatePhoto(activeIndex,false);
 }
 
+function closePhotoOverlay(){
+  document.getElementById("photo-overlay").classList.remove("active");
+}
+
 window.addEventListener("resize",function(){if(!gridVisible)buildTable();});
 
 function openLightbox(url,title,loc){
@@ -344,6 +375,12 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape")closeLightbo
 loadPhotos();
 </script>
 
+<div id="photo-overlay" onclick="if(event.target===this||event.target===document.getElementById('photo-overlay-inner')){closePhotoOverlay();}">
+  <div id="photo-overlay-inner">
+    <img id="photo-overlay-img" src="" alt="">
+    <div id="photo-overlay-cap"></div>
+  </div>
+</div>
 <div id="lightbox" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.95);align-items:center;justify-content:center;flex-direction:column;">
   <div style="position:absolute;top:1.5rem;right:2rem;cursor:pointer;color:rgba(255,255,255,.6);font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;" onclick="closeLightbox()">Close ✕</div>
   <img id="lightbox-img" style="max-width:90vw;max-height:85vh;object-fit:contain;display:block;" src="" alt="">
