@@ -195,15 +195,15 @@ function buildTable(){
     var border=document.createElement("div");
     border.className="photo-border";
     border.style.width=sz.w+"px";
-    border.style.maxWidth=sz.w+"px";
     border.style.overflow="hidden";
     var img=document.createElement("img");
-    img.src=p.url.replace("/upload/","/upload/w_400,q_100/");
+    img.src=p.url.replace("/upload/","/upload/w_"+sz.w*2+",q_85/");
     img.style.width=sz.w+"px";
     img.style.height="auto";
     img.style.display="block";
     img.loading="lazy";
     img.alt=p.title;
+    img.dataset.fullUrl=p.url.replace("/upload/","/upload/w_2400,q_95/");
     var cap=document.createElement("div");
     cap.className="photo-cap";
     cap.textContent=p.loc||p.title;
@@ -294,9 +294,12 @@ function showGrid(cat,btn){
   } else {
     var html="";
     filtered.forEach(function(p){
-      var src=p.url.replace("/upload/","/upload/w_800,q_auto,f_auto/");
-      html+='<div class="grid-item">';
-      html+='<img src="'+src+'" loading="lazy" alt="'+p.title+'">'
+      var src=p.url.replace("/upload/","/upload/w_1200,q_95/");
+      var full=p.url.replace("/upload/","/upload/w_2400,q_95/");
+      var safeTitle=p.title.replace(/'/g,"&#39;");
+      var safeLoc=p.loc.replace(/'/g,"&#39;");
+      html+='<div class="grid-item" style="cursor:pointer" onclick="openLightbox(\''+full+'\',\''+safeTitle+'\',\''+safeLoc+'\')">';
+      html+='<img src="'+src+'" loading="lazy" alt="'+safeTitle+'">';
       html+='<div class="img-overlay"></div>';
       html+='<div class="img-info">';
       html+='<div class="img-info-title">'+p.title+'</div>';
@@ -322,7 +325,32 @@ function showTable(){
 }
 
 window.addEventListener("resize",function(){if(!gridVisible)buildTable();});
+
+function openLightbox(url,title,loc){
+  var lb=document.getElementById("lightbox");
+  document.getElementById("lightbox-img").src=url;
+  document.getElementById("lightbox-title").textContent=title;
+  document.getElementById("lightbox-loc").textContent=loc;
+  lb.style.display="flex";
+  document.body.style.overflow="hidden";
+}
+function closeLightbox(){
+  document.getElementById("lightbox").style.display="none";
+  document.getElementById("lightbox-img").src="";
+  document.body.style.overflow="";
+}
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeLightbox();});
+
 loadPhotos();
 </script>
+
+<div id="lightbox" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.95);align-items:center;justify-content:center;flex-direction:column;">
+  <div style="position:absolute;top:1.5rem;right:2rem;cursor:pointer;color:rgba(255,255,255,.6);font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;" onclick="closeLightbox()">Close ✕</div>
+  <img id="lightbox-img" style="max-width:90vw;max-height:85vh;object-fit:contain;display:block;" src="" alt="">
+  <div style="margin-top:1.2rem;text-align:center;">
+    <div id="lightbox-title" style="font-family:'EB Garamond',serif;font-style:italic;font-size:20px;color:#f0ece4;"></div>
+    <div id="lightbox-loc" style="font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,236,228,.42);margin-top:.3rem;"></div>
+  </div>
+</div>
 </body>
 </html>
